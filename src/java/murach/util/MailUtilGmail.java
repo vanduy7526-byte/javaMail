@@ -10,32 +10,33 @@ public class MailUtilGmail {
             String subject, String body, boolean bodyIsHTML)
             throws MessagingException {
 
-        // 1 - get a mail session
         Properties props = new Properties();
-        props.put("mail.transport.protocol", "smtps");
-        props.put("mail.smtps.host", "smtp.gmail.com");
-        props.put("mail.smtps.port", 465);
-        props.put("mail.smtps.auth", "true");
-        props.put("mail.smtps.quitwait", "false");
-        Session session = Session.getDefaultInstance(props);
+        props.put("mail.transport.protocol", "smtp");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+        props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+        props.put("mail.smtp.connectiontimeout", "10000");
+        props.put("mail.smtp.timeout", "10000");
+        
+        Session session = Session.getInstance(props);
         session.setDebug(true);
 
-        // 2 - create a message
         Message message = new MimeMessage(session);
         message.setSubject(subject);
         if (bodyIsHTML) {
-            message.setContent(body, "text/html");
+            message.setContent(body, "text/html; charset=UTF-8");
         } else {
             message.setText(body);
         }
 
-        // 3 - address the message
         Address fromAddress = new InternetAddress(from);
         Address toAddress = new InternetAddress(to);
         message.setFrom(fromAddress);
         message.setRecipient(Message.RecipientType.TO, toAddress);
 
-        // 4 - send the message
         Transport transport = session.getTransport();
         transport.connect("vanduy7526@gmail.com", "ddvfxngkskbjtqes");
         transport.sendMessage(message, message.getAllRecipients());
